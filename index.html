@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>affiliate-bio-page</title>
+  <meta name="description" content="Halaman link affiliate sederhana untuk Vercel." />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #111111;
+      --surface: #1a1a1a;
+      --surface-2: #232323;
+      --text: #f4f4f4;
+      --muted: #b8b8b8;
+      --border: rgba(255,255,255,.08);
+      --accent: #25c2a0;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.22);
+      --font: 'Satoshi', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: radial-gradient(circle at top, rgba(37,194,160,.15), transparent 28%), var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding: 24px 16px 48px;
+    }
+    .container {
+      width: min(100%, 680px);
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, var(--accent), #178f77);
+      font-weight: 700;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    h1 {
+      font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 34ch;
+      margin: 0 auto;
+    }
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(180deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      color: var(--text);
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37,194,160,.35);
+    }
+    .number {
+      width: 36px;
+      height: 36px;
+      flex: none;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(37,194,160,.14);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .name {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <div class="avatar">IO</div>
+      <h1>Daftar Produk Affiliate</h1>
+      <p class="subtitle">Klik nama produk untuk langsung membuka link affiliate.</p>
+    </header>
+
+    <section class="list">
+      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="number">1</span>
+        <span class="name">Produk 1</span>
+      </a>
+      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="number">2</span>
+        <span class="name">Produk 2</span>
+      </a>
+      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="number">3</span>
+        <span class="name">Produk 3</span>
+      </a>
+      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="number">4</span>
+        <span class="name">Produk 4</span>
+      </a>
+      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="number">5</span>
+        <span class="name">Produk 5</span>
+      </a>
+    </section>
+
+    <p class="footer">Ganti nama produk dan semua link <code>#</code> dengan link affiliate milikmu.</p>
+  </main>
+</body>
+</html>
