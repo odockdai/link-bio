@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>affiliate-bio-page</title>
-  <meta name="description" content="Halaman link affiliate sederhana untuk Vercel." />
+  <meta name="description" content="Halaman link affiliate sederhana." />
   <link rel="preconnect" href="https://api.fontshare.com" />
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
   <style>
@@ -59,10 +59,35 @@
       max-width: 34ch;
       margin: 0 auto;
     }
+    
+    /* Search Bar Styles */
+    .search-container {
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,194,160,.15);
+    }
+    .search-input::placeholder {
+      color: var(--muted);
+    }
+
     .list {
       display: grid;
       gap: 12px;
-      margin-top: 28px;
     }
     .item {
       display: flex;
@@ -96,12 +121,25 @@
     .name {
       font-size: 1rem;
       font-weight: 600;
+      /* Memastikan teks yang panjang tidak merusak layout */
+      word-break: break-word; 
     }
     .footer {
-      margin-top: 22px;
+      margin-top: 32px;
       text-align: center;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+    }
+    
+    /* Loading & Error States */
+    .status-message {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
@@ -109,34 +147,129 @@
   <main class="container">
     <header class="header">
       <div class="avatar">IO</div>
-      <h1>Daftar Produk Affiliate</h1>
-      <p class="subtitle">Klik nama produk untuk langsung membuka link affiliate.</p>
+      <h1>Daftar Produk</h1>
+      <p class="subtitle">Cari nomor atau nama produk yang ada di video.</p>
     </header>
 
-    <section class="list">
-      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="number">1</span>
-        <span class="name">Produk 1</span>
-      </a>
-      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="number">2</span>
-        <span class="name">Produk 2</span>
-      </a>
-      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="number">3</span>
-        <span class="name">Produk 3</span>
-      </a>
-      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="number">4</span>
-        <span class="name">Produk 4</span>
-      </a>
-      <a class="item" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="number">5</span>
-        <span class="name">Produk 5</span>
-      </a>
+    <div class="search-container">
+      <input type="text" id="searchInput" class="search-input" placeholder="Cari nomor (misal: 1) atau nama produk..." autocomplete="off" />
+    </div>
+
+    <div id="statusMessage" class="status-message">Memuat daftar produk...</div>
+
+    <section id="linksContainer" class="list hidden">
+      <!-- Item link akan di-generate oleh JavaScript di sini -->
     </section>
 
-    <p class="footer">Ganti nama produk dan semua link <code>#</code> dengan link affiliate milikmu.</p>
+    <p class="footer">Diperbarui secara otomatis.</p>
   </main>
+
+  <script>
+    // Link CSV dari Google Sheets Anda
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1geuQ-F_6wugoj_yiRg4h5Exkmoj-SK0SGB3res5oIhkXXzWpt22UB5YbDONaIFJD4CJL5RjnDgjs/pub?output=csv';
+    
+    let allProducts = [];
+
+    // Fungsi sederhana untuk mem-parsing CSV
+    function parseCSV(text) {
+      const lines = text.split('\n').filter(line => line.trim() !== '');
+      const data = [];
+      
+      // Lewati baris pertama (header: nama, produk, link)
+      for (let i = 1; i < lines.length; i++) {
+        // Regex untuk split berdasarkan koma, tapi mengabaikan koma di dalam tanda kutip ganda
+        const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        
+        if (row.length >= 3) {
+          data.push({
+            // Menghilangkan tanda kutip jika ada
+            nomor: row[0].replace(/(^"|"$)/g, '').trim(),
+            nama: row[1].replace(/(^"|"$)/g, '').trim(),
+            link: row[2].replace(/(^"|"$)/g, '').trim()
+          });
+        }
+      }
+      return data;
+    }
+
+    function renderLinks(products) {
+      const container = document.getElementById('linksContainer');
+      const statusMessage = document.getElementById('statusMessage');
+      
+      container.innerHTML = ''; // Kosongkan container
+
+      if (products.length === 0) {
+        statusMessage.textContent = 'Tidak ada produk yang ditemukan.';
+        statusMessage.classList.remove('hidden');
+        container.classList.add('hidden');
+        return;
+      }
+
+      // Sembunyikan pesan status, tampilkan container
+      statusMessage.classList.add('hidden');
+      container.classList.remove('hidden');
+
+      products.forEach(product => {
+        // Abaikan baris kosong jika ada
+        if (!product.nomor || !product.nama || !product.link) return;
+
+        // Pastikan link valid (tambah https:// jika belum ada agar bisa di-klik)
+        let finalLink = product.link;
+        if (!finalLink.startsWith('http://') && !finalLink.startsWith('https://')) {
+          finalLink = 'https://' + finalLink;
+        }
+
+        const a = document.createElement('a');
+        a.className = 'item';
+        a.href = finalLink;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+
+        const spanNumber = document.createElement('span');
+        spanNumber.className = 'number';
+        spanNumber.textContent = product.nomor;
+
+        const spanName = document.createElement('span');
+        spanName.className = 'name';
+        spanName.textContent = product.nama;
+
+        a.appendChild(spanNumber);
+        a.appendChild(spanName);
+        container.appendChild(a);
+      });
+    }
+
+    // Fungsi untuk mengambil data dari CSV
+    async function fetchData() {
+      try {
+        // Tambahkan timestamp untuk menghindari cache dari browser
+        const response = await fetch(CSV_URL + '&t=' + new Date().getTime());
+        if (!response.ok) throw new Error('Gagal mengambil data');
+        
+        const csvText = await response.text();
+        allProducts = parseCSV(csvText);
+        
+        renderLinks(allProducts);
+      } catch (error) {
+        console.error('Error fetching CSV:', error);
+        document.getElementById('statusMessage').textContent = 'Terjadi kesalahan saat memuat data. Silakan refresh halaman.';
+      }
+    }
+
+    // Fitur Pencarian
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      const filteredProducts = allProducts.filter(product => {
+        return product.nomor.toLowerCase().includes(searchTerm) || 
+               product.nama.toLowerCase().includes(searchTerm);
+      });
+      
+      renderLinks(filteredProducts);
+    });
+
+    // Jalankan saat halaman pertama kali dimuat
+    fetchData();
+  </script>
 </body>
 </html>
