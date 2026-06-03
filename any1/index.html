@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>affiliate-bio-page</title>
+    <meta name="description" content="Halaman link affiliate sederhana." />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Deep plum/magenta black background */
+        --bg: #140b12;
+        /* Soft glass surface */
+        --surface: rgba(255, 255, 255, 0.05);
+        --surface-2: rgba(255, 255, 255, 0.08);
+        --text: #fdfafc;
+        --muted: #b8a9b3;
+        --border: rgba(255, 255, 255, 0.08);
+        /* Vibrant magenta accent */
+        --accent: #d92570;
+        --accent-light: #ff4794;
+        --radius: 20px;
+        /* Soft 3D shadows */
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        --shadow-3d: 0 4px 0 rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
+        --font: "Satoshi", system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--font);
+        /* Rich gradient background */
+        background: radial-gradient(circle at top, #2e1022, var(--bg));
+        color: var(--text);
+        height: 100dvh;
+        overflow: hidden;
+        line-height: 1.5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        width: 100%;
+        max-width: 480px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 32px 16px 0;
+      }
+      @media (min-width: 481px) {
+        .container {
+          height: 90vh;
+          max-height: 850px;
+          border-radius: 36px;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+          padding: 32px 24px 0;
+        }
+      }
+      .header {
+        flex-shrink: 0;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        display: block;
+        margin: 0 auto 16px;
+        object-fit: cover;
+        /* 3D Border & Shadow effect */
+        border: 3px solid rgba(255, 255, 255, 0.15);
+        box-shadow:
+          0 12px 32px rgba(217, 37, 112, 0.25),
+          inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+      }
+      h1 {
+        font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+        margin-bottom: 6px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.95rem;
+        max-width: 38ch;
+        margin: 0 auto;
+      }
+
+      /* Search Bar Styles - Glassmorphism */
+      .search-container {
+        flex-shrink: 0;
+        margin-bottom: 24px;
+        position: relative;
+      }
+      .search-input {
+        width: 100%;
+        padding: 16px 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        border-radius: 99px; /* Pill shape */
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 1rem;
+        outline: none;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .search-input:focus {
+        border-color: rgba(217, 37, 112, 0.5);
+        background: rgba(0, 0, 0, 0.3);
+        box-shadow:
+          0 0 0 4px rgba(217, 37, 112, 0.15),
+          inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .search-input::placeholder {
+        color: var(--muted);
+      }
+
+      /* Scrollable Area for List */
+      .scroll-area {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 32px;
+        padding-right: 4px; /* for scrollbar */
+        /* Smooth scrolling */
+        scroll-behavior: smooth;
+      }
+      /* Scrollbar Styling */
+      .scroll-area::-webkit-scrollbar {
+        width: 4px;
+      }
+      .scroll-area::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .scroll-area::-webkit-scrollbar-thumb {
+        background: rgba(217, 37, 112, 0.3);
+        border-radius: 4px;
+      }
+
+      .list {
+        display: grid;
+        gap: 14px;
+      }
+      /* 3D Button Style */
+      .item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: linear-gradient(
+          145deg,
+          rgba(40, 25, 35, 0.8),
+          rgba(25, 15, 22, 0.8)
+        );
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        color: var(--text);
+        text-decoration: none;
+        /* The 3D drop */
+        box-shadow: var(--shadow-3d);
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      /* Inner top highlight for 3D effect */
+      .item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+      }
+      .item:hover {
+        transform: translateY(-2px);
+        border-color: rgba(217, 37, 112, 0.3);
+        box-shadow:
+          0 6px 0 rgba(0, 0, 0, 0.3),
+          0 12px 24px rgba(217, 37, 112, 0.15);
+      }
+      /* Press effect */
+      .item:active {
+        transform: translateY(2px);
+        box-shadow:
+          0 2px 0 rgba(0, 0, 0, 0.3),
+          0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .number {
+        width: 40px;
+        height: 40px;
+        flex: none;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        /* Vibrant pop for the number */
+        background: linear-gradient(135deg, var(--accent-light), var(--accent));
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.05rem;
+        box-shadow: 0 4px 10px rgba(217, 37, 112, 0.3);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+      .name {
+        font-size: 1.05rem;
+        font-weight: 600;
+        word-break: break-word;
+      }
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      /* Loading & Error States */
+      .status-message {
+        text-align: center;
+        padding: 24px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <img src="pp2.png" alt="Profile Picture" class="avatar" />
+        <h1>Daftar Produk</h1>
+        <p class="subtitle">Cari nomor atau nama produk yang ada di video.</p>
+      </header>
+
+      <div class="search-container">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Cari nomor (misal: 1) atau nama produk..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="scroll-area">
+        <div id="statusMessage" class="status-message">
+          Memuat daftar produk...
+        </div>
+
+        <section id="linksContainer" class="list hidden">
+          <!-- Item link akan di-generate oleh JavaScript di sini -->
+        </section>
+
+        <p class="footer">Terima kasih sudah berbelanja</p>
+      </div>
+    </main>
+
+    <script>
+      // Link CSV dari Google Sheets Anda
+      const CSV_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRqYthUxBu9PZNni8NrUbnjvYvMeILAkCSn3WHgN84LDSirsqcBf4b-siwoRzT-fTaPmnxoJtku0ewi/pubhtml";
+
+      let allProducts = [];
+
+      // Fungsi sederhana untuk mem-parsing CSV
+      function parseCSV(text) {
+        const lines = text.split("\n").filter((line) => line.trim() !== "");
+        const data = [];
+
+        // Lewati baris pertama (header: nama, produk, link)
+        for (let i = 1; i < lines.length; i++) {
+          // Regex untuk split berdasarkan koma, tapi mengabaikan koma di dalam tanda kutip ganda
+          const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+          if (row.length >= 3) {
+            data.push({
+              // Menghilangkan tanda kutip jika ada
+              nomor: row[0].replace(/(^"|"$)/g, "").trim(),
+              nama: row[1].replace(/(^"|"$)/g, "").trim(),
+              link: row[2].replace(/(^"|"$)/g, "").trim(),
+            });
+          }
+        }
+        return data;
+      }
+
+      function renderLinks(products) {
+        const container = document.getElementById("linksContainer");
+        const statusMessage = document.getElementById("statusMessage");
+
+        container.innerHTML = ""; // Kosongkan container
+
+        if (products.length === 0) {
+          statusMessage.textContent = "Tidak ada produk yang ditemukan.";
+          statusMessage.classList.remove("hidden");
+          container.classList.add("hidden");
+          return;
+        }
+
+        // Sembunyikan pesan status, tampilkan container
+        statusMessage.classList.add("hidden");
+        container.classList.remove("hidden");
+
+        products.forEach((product) => {
+          // Abaikan baris kosong jika ada
+          if (!product.nomor || !product.nama || !product.link) return;
+
+          // Pastikan link valid (tambah https:// jika belum ada agar bisa di-klik)
+          let finalLink = product.link;
+          if (
+            !finalLink.startsWith("http://") &&
+            !finalLink.startsWith("https://")
+          ) {
+            finalLink = "https://" + finalLink;
+          }
+
+          const a = document.createElement("a");
+          a.className = "item";
+          a.href = finalLink;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+
+          const spanNumber = document.createElement("span");
+          spanNumber.className = "number";
+          spanNumber.textContent = product.nomor;
+
+          const spanName = document.createElement("span");
+          spanName.className = "name";
+          spanName.textContent = product.nama;
+
+          a.appendChild(spanNumber);
+          a.appendChild(spanName);
+          container.appendChild(a);
+        });
+      }
+
+      // Fungsi untuk mengambil data dari CSV
+      async function fetchData() {
+        try {
+          // Tambahkan timestamp untuk menghindari cache dari browser
+          const response = await fetch(CSV_URL + "&t=" + new Date().getTime());
+          if (!response.ok) throw new Error("Gagal mengambil data");
+
+          const csvText = await response.text();
+          allProducts = parseCSV(csvText);
+
+          renderLinks(allProducts);
+        } catch (error) {
+          console.error("Error fetching CSV:", error);
+          document.getElementById("statusMessage").textContent =
+            "Terjadi kesalahan saat memuat data. Silakan refresh halaman.";
+        }
+      }
+
+      // Fitur Pencarian
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        const filteredProducts = allProducts.filter((product) => {
+          return (
+            product.nomor.toLowerCase().includes(searchTerm) ||
+            product.nama.toLowerCase().includes(searchTerm)
+          );
+        });
+
+        renderLinks(filteredProducts);
+      });
+
+      // Jalankan saat halaman pertama kali dimuat
+      fetchData();
+    </script>
+  </body>
+</html>
